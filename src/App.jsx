@@ -1,5 +1,5 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PureHeader } from "./components/PureHeader.jsx";
 import { PureProductModal } from "./components/PureProductModal.jsx";
 import { PureCartSidebar } from "./components/PureCartSidebar.jsx";
@@ -11,7 +11,7 @@ import { AboutUsPage } from "./pages/AboutUsPage.jsx";
 import { ContactPage } from "./pages/ContactPage.jsx";
 import { FAQPage } from "./pages/FAQPage.jsx";
 import { ReviewsPage } from "./pages/ReviewsPage.jsx";
-import { CheckoutPage } from './pages/CheckoutPage.jsx';
+import { CheckoutPage } from "./pages/CheckoutPage.jsx";
 import {
   PurePrivacyPolicyPage,
   PureTermsOfServicePage,
@@ -19,21 +19,26 @@ import {
   PureReturnsPage,
 } from "./components/PurePages.jsx";
 
-import PureHomepage from "./components/PureHomepage.jsx"; 
-
-import { phoneCoolerProducts } from "./PhoneCoolerProducts.js";
-
+import PureHomepage from "./components/PureHomepage.jsx";
+import { ProfilePage } from "./pages/ProfilePage.jsx";
 import "./styles/styles-homepage.css";
 import "./styles/styles-pure-components.css";
-import 'flag-icons/css/flag-icons.min.css';
-
-
+import "flag-icons/css/flag-icons.min.css";
+import { SuccessPage } from "./pages/SuccessPage";
 
 export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailProduct, setDetailProduct] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/products/phone-coolers")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch(console.error);
+  }, []);
 
   const addToCart = (product, quantity = 1, selectedColor, selectedSize) => {
     setCartItems((prev) => {
@@ -103,7 +108,7 @@ export default function App() {
           path="/"
           element={
             <PureHomepage
-              products={phoneCoolerProducts}
+              products={products}
               onProductClick={(p) => setSelectedProduct(p)}
               cartItemCount={cartItemCount}
               onCartClick={() => setIsCartOpen(true)}
@@ -114,14 +119,19 @@ export default function App() {
           path="/products"
           element={
             <PureProductsPage
-              products={phoneCoolerProducts}
+              products={products}
               onProductClick={(p) => setDetailProduct(p)}
             />
           }
         />
         <Route
           path="/product-detail/:id"
-          element={<PureProductDetailPageWrapper onAddToCart={addToCart} />}
+          element={
+            <PureProductDetailPageWrapper
+              onAddToCart={addToCart}
+              setIsCartOpen={setIsCartOpen} // ✅ pass this too
+            />
+          }
         />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
@@ -132,6 +142,8 @@ export default function App() {
         <Route path="/terms" element={<PureTermsOfServicePage />} />
         <Route path="/shipping" element={<PureShippingPage />} />
         <Route path="/returns" element={<PureReturnsPage />} />
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
 
       <PureFooter />

@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import '../styles/styles-pure-components.css';
+import { useState } from "react";
+import "../styles/styles-pure-components.css";
 
-export function PureProductDetailPage({ product, onBack, onAddToCart }) {
+export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartOpen }) {
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || '');
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  // Use images directly from the product object
   const productImages = product.images || [];
 
   const renderStars = (rating) => {
@@ -30,6 +29,7 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
 
   const handleAddToCart = () => {
     onAddToCart(quantity, selectedColor);
+    setIsCartOpen(true); // ✅ Automatically open sidebar
   };
 
   return (
@@ -37,7 +37,11 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
       <div className="pure-product-detail-container">
         <button onClick={onBack} className="pure-back-button">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clipRule="evenodd"
+            />
           </svg>
           Back to Products
         </button>
@@ -45,14 +49,14 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
         <div className="pure-product-detail-grid">
           {/* Product Gallery */}
           <div className="pure-product-gallery">
-            <img 
+            <img
               src={productImages[selectedImageIndex]}
               alt={product.name}
               className="pure-main-image"
             />
             <div className="pure-thumbnail-grid">
               {productImages.map((image, index) => (
-                <img 
+                <img
                   key={index}
                   src={image}
                   alt={`${product.name} view ${index + 1}`}
@@ -66,7 +70,7 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
           {/* Product Info */}
           <div className="pure-product-info">
             <h1 className="pure-product-detail-title">{product.name}</h1>
-            
+
             <div className="pure-product-detail-price">
               <span className="pure-product-detail-current-price">${product.price}</span>
               {product.originalPrice && (
@@ -75,15 +79,11 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
             </div>
 
             <div className="pure-product-detail-rating">
-              <div className="pure-product-detail-stars">
-                {renderStars(product.rating)}
-              </div>
+              <div className="pure-product-detail-stars">{renderStars(product.rating)}</div>
               <span className="pure-product-detail-reviews">({product.reviews} reviews)</span>
             </div>
 
-            <p className="pure-product-detail-description">
-              {product.description}
-            </p>
+            <p className="pure-product-detail-description">{product.description}</p>
 
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
@@ -107,23 +107,17 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
             <div className="pure-quantity-selector">
               <label className="pure-quantity-label">Quantity</label>
               <div className="pure-quantity-controls">
-                <button 
-                  onClick={() => handleQuantityChange(quantity - 1)}
-                  className="pure-quantity-button"
-                >
+                <button onClick={() => handleQuantityChange(quantity - 1)} className="pure-quantity-button">
                   −
                 </button>
-                <input 
+                <input
                   type="number"
                   value={quantity}
                   onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
                   className="pure-quantity-input"
                   min="1"
                 />
-                <button 
-                  onClick={() => handleQuantityChange(quantity + 1)}
-                  className="pure-quantity-button"
-                >
+                <button onClick={() => handleQuantityChange(quantity + 1)} className="pure-quantity-button">
                   +
                 </button>
               </div>
@@ -142,7 +136,11 @@ export function PureProductDetailPage({ product, onBack, onAddToCart }) {
                   {product.features.map((feature, index) => (
                     <li key={index} className="pure-feature-item">
                       <svg className="pure-feature-icon" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       <span className="pure-feature-text">{feature}</span>
                     </li>

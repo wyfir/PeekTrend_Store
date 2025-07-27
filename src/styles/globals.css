@@ -1,4 +1,5 @@
 @import "resets.css";
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -131,6 +132,10 @@
   }
 }
 
+* {
+  font-family: "Poppins", sans-serif;
+}
+
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */
@@ -188,4 +193,183 @@
 
 html {
   font-size: var(--font-size);
+}
+
+
+/* styles/SuccessPage.css */
+.success-page {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.success-btn {
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  background-color: #222;
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.success-btn:hover {
+  background-color: #444;
+}
+
+
+.profile-page {
+  font-family: "Poppins", sans-serif;
+  padding: 2rem 1rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.profile-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: right;
+  margin-bottom: 2rem;
+  color: #111;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.order-block {
+  border: 1px solid #dedede;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.order-block:hover {
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+}
+
+.order-image img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+  max-height: 250px;
+  padding: 1rem;
+  background: white;
+}
+
+.delivery-status {
+  margin: 1.5rem auto;
+  padding: 0.75rem 1.25rem;
+  max-width: 500px;
+  background: #f3f4f6;
+  border-left: 4px solid #3b82f6;
+  font-size: 1rem;
+  border-radius: 8px;
+  color: #1f2937;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+}
+
+.order-content {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.order-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 0.5rem;
+}
+
+.order-status-label {
+  background-color: #e0f2f1;
+  color: #00796b;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.order-product-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+  margin: 0.2rem 0;
+}
+
+.order-details {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.order-quantity-list {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-line {
+  font-size: 0.88rem;
+  color: #444;
+}
+
+@media (min-width: 640px) {
+  .order-block {
+    flex-direction: row;
+  }
+
+  .order-image {
+    flex: 1;
+    max-width: 220px;
+  }
+
+  .order-content {
+    flex: 2;
+  }
+}
+
+/* Status badge styles */
+.order-badge {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  color: white;
+  text-transform: uppercase;
+}
+
+.order-badge.delivered {
+  background-color: #10b981;
+  /* green */
+}
+
+.order-badge.pending {
+  background-color: #f59e0b;
+  /* amber */
+}
+
+.order-badge.today {
+  background-color: #3b82f6;
+  /* blue */
+}
+
+.order-badge.late {
+  background-color: #ef4444;
+  /* red */
+}
+
+.cl-internal-friqq3 {
+  left: 80px;
+  position: relative;
+display: flex;
 }

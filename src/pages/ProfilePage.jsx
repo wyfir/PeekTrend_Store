@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import "../styles/globals.css";
-
+import { API_BASE_URL } from "../config";
 export function ProfilePage() {
   const { user } = useUser();
   const [orders, setOrders] = useState([]);
@@ -15,8 +15,8 @@ export function ProfilePage() {
     const fetchData = async () => {
       try {
         const [ordersRes, productsRes] = await Promise.all([
-          fetch(`http://localhost:3001/api/orders/user/${user.id}`),
-          fetch(`http://localhost:3001/api/products/phone-coolers`)
+          fetch(`${API_BASE_URL}/api/orders/user/${user.id}`),
+          fetch(`${API_BASE_URL}/api/products/phone-coolers`)
         ]);
 
         if (!ordersRes.ok || !productsRes.ok) throw new Error("Fetch failed");

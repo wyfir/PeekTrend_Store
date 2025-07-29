@@ -115,6 +115,16 @@ export function PureProductsPage({ products }) {
                       ({product.reviews})
                     </span>
                   </div>
+                  {/* <div className="for_type">
+                    <div className="inside_type">
+                      <img
+                        style={{ width: "23px" }}
+                        src="https://cdn-icons-png.flaticon.com/512/7887/7887081.png "
+                        alt=""
+                      />
+                      <p>{product.for}</p>
+                    </div>
+                  </div> */}
                 </div>
               </div>
             </div>

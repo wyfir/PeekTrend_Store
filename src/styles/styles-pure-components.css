@@ -1234,3 +1234,119 @@
     font-size: 1.125rem;
   }
 }
+
+
+
+
+
+/* Feedback Section Layout */
+.pure-feedback-section {
+  margin-top: 4rem;
+  padding: 2rem 1.5rem;
+  background-color: #fafafa;
+  border-top: 1px solid #eee;
+}
+
+.pure-feedback-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #222;
+  text-align: center;
+}
+
+/* Grid Layout - Mobile First */
+.pure-feedback-list {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .pure-feedback-list {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* Feedback Card */
+.pure-feedback-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.035);
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: box-shadow 0.2s ease;
+}
+.pure-feedback-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Header: Avatar + User Info */
+.pure-feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pure-feedback-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+}
+
+.pure-feedback-userblock {
+  flex: 1;
+}
+
+.pure-feedback-userline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pure-feedback-username {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #222;
+}
+
+.pure-feedback-verified {
+  font-size: 0.75rem;
+  background-color: #e1f5e1;
+  color: #0a8f36;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-weight: 500;
+  border: 1px solid #b9e8b9;
+}
+
+/* Stars */
+.pure-feedback-stars {
+  display: flex;
+  gap: 2px;
+}
+
+/* Comment */
+.pure-feedback-comment {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}
+
+/* Photo */
+.pure-feedback-photo-small {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  object-fit: contain;
+  align-self: flex-start;
+}

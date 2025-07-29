@@ -371,5 +371,83 @@ html {
 .cl-internal-friqq3 {
   left: 80px;
   position: relative;
-display: flex;
+  display: flex;
+}
+
+.for_type {
+  margin-left: 30px;
+
+  font-weight: 650;
+  border: 1px solid #969696;
+  border-radius: 6px;
+  color: #f8edff;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #ad58dbd4;
+  height: 27px;
+  width: 150px;
+}
+
+.inside_type {
+  width: 125px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.for_type {
+  margin-left: 30px;
+  font-weight: 650;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 27px;
+  width: 150px;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.inside_type {
+  width: 125px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 🎮 Hard Gaming */
+.for_type.hard-gaming {
+  background-color: #ad58dbd4;
+  color: #f8edff;
+  border-color: #969696;
+}
+
+/* ⚖️ Hybrid */
+.for_type.hybrid {
+  background-color: #e4f0fb;
+  color: #1a4e78;
+  border-color: #a3c5e0;
+}
+
+/* 📹 Streaming */
+.for_type.streaming {
+  background-color: #fef3e6;
+  background-color: #fef3e6;
+  color: #f44336;
+  border-color: #f5d0a9;
+}
+
+.for_type.hybrid .inside_type {
+  width: 90px;
+}
+
+.games {
+  width: 80px;
+}
+
+.inside_type.streaming {
+
+  width: 90px;
 }

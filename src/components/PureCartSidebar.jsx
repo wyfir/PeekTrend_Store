@@ -1,7 +1,7 @@
 import "../styles/styles-pure-components.css";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-
+import { API_BASE_URL } from "../config";
 export function PureCartSidebar({
   isOpen,
   onClose,
@@ -14,22 +14,27 @@ export function PureCartSidebar({
 
   const navigate = useNavigate();
   const { user } = useUser(); // ✅ must be inside the component
-
+  const referrer = localStorage.getItem("pendingReferrer");
   const handleCheckout = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items,
-          clerkId: user?.id,
-          clerkEmail: user?.emailAddresses?.[0]?.emailAddress,
-        }),
-      });
+      const referrer = localStorage.getItem("pendingReferrer"); // ✅ this is great
+
+      const res = await fetch(
+        `${API_BASE_URL}/api/create-checkout-session`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items,
+            clerkId: user?.id,
+            clerkEmail: user?.emailAddresses?.[0]?.emailAddress,
+            referrer: referrer || "direct", // ✅ fallback for no ref
+          }),
+        }
+      );
 
       const { url } = await res.json();
+
       if (url) {
         window.location.href = url;
       } else {
@@ -91,7 +96,11 @@ export function PureCartSidebar({
                   <div className="pure-cart-item-controls">
                     <button
                       onClick={() =>
-                        onRemoveItem(item.id, item.selectedColor, item.selectedSize)
+                        onRemoveItem(
+                          item.id,
+                          item.selectedColor,
+                          item.selectedSize
+                        )
                       }
                       className="pure-cart-remove"
                     >

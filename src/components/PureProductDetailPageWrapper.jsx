@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 import { PureProductDetailPage } from "../pages/PureProductDetailPage.jsx";
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config";
 
 export function PureProductDetailPageWrapper({ onAddToCart, setIsCartOpen }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/products/phone-coolers")
+    fetch(`${API_BASE_URL}/api/products/phone-coolers`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch(console.error);

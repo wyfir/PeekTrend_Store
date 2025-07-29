@@ -1,8 +1,13 @@
 import { useState } from "react";
 import "../styles/styles-pure-components.css";
 
-export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartOpen }) {
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || '');
+export function PureProductDetailPage({
+  product,
+  onBack,
+  onAddToCart,
+  setIsCartOpen,
+}) {
+  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -12,7 +17,9 @@ export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartO
     return Array.from({ length: 5 }, (_, i) => (
       <svg
         key={i}
-        className={i < Math.floor(rating) ? 'pure-star' : 'pure-star pure-star-empty'}
+        className={
+          i < Math.floor(rating) ? "pure-star" : "pure-star pure-star-empty"
+        }
         fill="currentColor"
         viewBox="0 0 20 20"
       >
@@ -60,7 +67,9 @@ export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartO
                   key={index}
                   src={image}
                   alt={`${product.name} view ${index + 1}`}
-                  className={`pure-thumbnail ${selectedImageIndex === index ? 'active' : ''}`}
+                  className={`pure-thumbnail ${
+                    selectedImageIndex === index ? "active" : ""
+                  }`}
                   onClick={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -72,29 +81,93 @@ export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartO
             <h1 className="pure-product-detail-title">{product.name}</h1>
 
             <div className="pure-product-detail-price">
-              <span className="pure-product-detail-current-price">${product.price}</span>
+              <span className="pure-product-detail-current-price">
+                ${product.price}
+              </span>
               {product.originalPrice && (
-                <span className="pure-product-detail-original-price">${product.originalPrice}</span>
+                <span className="pure-product-detail-original-price">
+                  ${product.originalPrice}
+                </span>
+              )}
+              {product.for == "Hard Gaming" && (
+                <div className="for_type">
+                  <div className="inside_type">
+                    <img
+                      style={{ width: "23px" }}
+                      src="https://cdn-icons-png.flaticon.com/512/7887/7887081.png "
+                      alt=""
+                    />
+                    <p>Hard Gaming</p>
+                  </div>
+                </div>
+              )}
+              {product.for == "Games" && (
+                <div className="for_type">
+                  <div className="inside_type games">
+                    <img
+                      style={{ width: "23px" }}
+                      src="https://cdn-icons-png.flaticon.com/512/7887/7887081.png "
+                      alt=""
+                    />
+                    <p>Games</p>
+                  </div>
+                </div>
+              )}
+
+              {product.for === "Hybrid" && (
+                <div className="for_type hybrid">
+                  <div className="inside_type">
+                    <img
+                      style={{ width: "17px" }}
+                      src="https://cdn-icons-png.flaticon.com/512/1153/1153269.png"
+                      alt="Hybrid icon"
+                    />
+                    <p>Hybrid Use</p>
+                  </div>
+                </div>
+              )}
+
+              {product.for === "Streaming" && (
+                <div className="for_type streaming">
+                  <div className="inside_type streaming">
+                    <img
+                      style={{ width: "22px" }}
+                      src="https://img.icons8.com/color/512/youtube-live.png"
+                      alt="Streaming icon"
+                    />
+                    <p>Streaming</p>
+                  </div>
+                </div>
               )}
             </div>
 
             <div className="pure-product-detail-rating">
-              <div className="pure-product-detail-stars">{renderStars(product.rating)}</div>
-              <span className="pure-product-detail-reviews">({product.reviews} reviews)</span>
+              <div className="pure-product-detail-stars">
+                {renderStars(product.rating)}
+              </div>
+              <span className="pure-product-detail-reviews">
+                ({product.reviews} reviews)
+              </span>
             </div>
 
-            <p className="pure-product-detail-description">{product.description}</p>
+            <p className="pure-product-detail-description">
+              {product.description}
+            </p>
 
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div className="pure-color-selector">
-                <label className="pure-color-label">Color: {selectedColor}</label>
+                <label className="pure-color-label">
+                  Color: {selectedColor}
+                </label>
                 <div className="pure-color-options">
                   {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`pure-color-option ${selectedColor === color ? 'selected' : ''}`}
+                      className={`pure-color-option ${
+                        selectedColor === color ? "selected" : ""
+                      }`}
                     >
                       {color}
                     </button>
@@ -107,17 +180,25 @@ export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartO
             <div className="pure-quantity-selector">
               <label className="pure-quantity-label">Quantity</label>
               <div className="pure-quantity-controls">
-                <button onClick={() => handleQuantityChange(quantity - 1)} className="pure-quantity-button">
+                <button
+                  onClick={() => handleQuantityChange(quantity - 1)}
+                  className="pure-quantity-button"
+                >
                   −
                 </button>
                 <input
                   type="number"
                   value={quantity}
-                  onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleQuantityChange(parseInt(e.target.value) || 1)
+                  }
                   className="pure-quantity-input"
                   min="1"
                 />
-                <button onClick={() => handleQuantityChange(quantity + 1)} className="pure-quantity-button">
+                <button
+                  onClick={() => handleQuantityChange(quantity + 1)}
+                  className="pure-quantity-button"
+                >
                   +
                 </button>
               </div>
@@ -135,7 +216,11 @@ export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartO
                 <ul className="pure-features-list">
                   {product.features.map((feature, index) => (
                     <li key={index} className="pure-feature-item">
-                      <svg className="pure-feature-icon" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="pure-feature-icon"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path
                           fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -165,6 +250,65 @@ export function PureProductDetailPage({ product, onBack, onAddToCart, setIsCartO
             )}
           </div>
         </div>
+        {product.feedbacks && product.feedbacks.length > 0 && (
+          <div className="pure-feedback-section">
+            <h3 className="pure-feedback-title">Customer Feedback</h3>
+            <div className="pure-feedback-list">
+              {product.feedbacks.map((feedback, index) => (
+                <div key={index} className="pure-feedback-card">
+                  <div className="pure-feedback-header">
+                    <img
+                      src={
+                        feedback.avatar ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          feedback.user
+                        )}`
+                      }
+                      alt={feedback.user}
+                      className="pure-feedback-avatar"
+                    />
+                    <div className="pure-feedback-userblock">
+                      <div className="pure-feedback-userline">
+                        <p className="pure-feedback-username">
+                          {feedback.user}
+                        </p>
+                        <span className="pure-feedback-verified">
+                          ✔ Verified Buyer
+                        </span>
+                      </div>
+                      <div className="pure-feedback-stars">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <svg
+                            key={i}
+                            className={
+                              i < Math.floor(feedback.rating)
+                                ? "pure-star"
+                                : "pure-star pure-star-empty"
+                            }
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="pure-feedback-comment">“{feedback.comment}”</p>
+
+                  {feedback.photos && (
+                    <img
+                      src={feedback.photo}
+                      alt="User photo"
+                      className="pure-feedback-photo-small"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

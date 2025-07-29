@@ -12,19 +12,23 @@ import { ContactPage } from "./pages/ContactPage.jsx";
 import { FAQPage } from "./pages/FAQPage.jsx";
 import { ReviewsPage } from "./pages/ReviewsPage.jsx";
 import { CheckoutPage } from "./pages/CheckoutPage.jsx";
-import {
-  PurePrivacyPolicyPage,
-  PureTermsOfServicePage,
-  PureShippingPage,
-  PureReturnsPage,
-} from "./components/PurePages.jsx";
-
 import PureHomepage from "./components/PureHomepage.jsx";
 import { ProfilePage } from "./pages/ProfilePage.jsx";
 import "./styles/styles-homepage.css";
 import "./styles/styles-pure-components.css";
 import "flag-icons/css/flag-icons.min.css";
 import { SuccessPage } from "./pages/SuccessPage";
+import { API_BASE_URL } from "./config";
+import {
+  PureFAQPage,
+  PureAboutUsPage,
+  PureContactPage,
+  PurePrivacyPolicyPage,
+  PureTermsOfServicePage,
+  PureShippingPage,
+  PureReturnsPage,
+} from "./components/PurePages.jsx";
+
 
 export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -32,9 +36,22 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [products, setProducts] = useState([]);
+  const [activePage, setActivePage] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/products/phone-coolers")
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+
+    if (ref) {
+      localStorage.setItem("referrer", ref);
+
+      // Optional: clean URL after storing
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+  }, []);
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/products/phone-coolers`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch(console.error);
@@ -102,51 +119,72 @@ export default function App() {
         cartItemCount={cartItemCount}
         onCartClick={() => setIsCartOpen(true)}
       />
-
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <PureHomepage
-              products={products}
-              onProductClick={(p) => setSelectedProduct(p)}
-              cartItemCount={cartItemCount}
-              onCartClick={() => setIsCartOpen(true)}
-            />
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <PureProductsPage
-              products={products}
-              onProductClick={(p) => setDetailProduct(p)}
-            />
-          }
-        />
-        <Route
-          path="/product-detail/:id"
-          element={
-            <PureProductDetailPageWrapper
-              onAddToCart={addToCart}
-              setIsCartOpen={setIsCartOpen} // ✅ pass this too
-            />
-          }
-        />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/reviews" element={<ReviewsPage />} />
-        <Route path="/about" element={<AboutUsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/privacy" element={<PurePrivacyPolicyPage />} />
-        <Route path="/terms" element={<PureTermsOfServicePage />} />
-        <Route path="/shipping" element={<PureShippingPage />} />
-        <Route path="/returns" element={<PureReturnsPage />} />
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-      </Routes>
-
-      <PureFooter />
+      {activePage === null && (
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PureHomepage
+                products={products}
+                onProductClick={(p) => setSelectedProduct(p)}
+                cartItemCount={cartItemCount}
+                onCartClick={() => setIsCartOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <PureProductsPage
+                products={products}
+                onProductClick={(p) => setDetailProduct(p)}
+              />
+            }
+          />
+          <Route
+            path="/product-detail/:id"
+            element={
+              <PureProductDetailPageWrapper
+                onAddToCart={addToCart}
+                setIsCartOpen={setIsCartOpen} // ✅ pass this too
+              />
+            }
+          />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/about" element={<AboutUsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/privacy" element={<PurePrivacyPolicyPage />} />
+          <Route path="/terms" element={<PureTermsOfServicePage />} />
+          <Route path="/shipping" element={<PureShippingPage />} />
+          <Route path="/returns" element={<PureReturnsPage />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Routes>
+      )}
+      {activePage === "faq" && (
+        <PureFAQPage onBack={() => setActivePage(null)} />
+      )}
+      {activePage === "about" && (
+        <PureAboutUsPage onBack={() => setActivePage(null)} />
+      )}
+      {activePage === "contact" && (
+        <PureContactPage onBack={() => setActivePage(null)} />
+      )}
+      {activePage === "privacy" && (
+        <PurePrivacyPolicyPage onBack={() => setActivePage(null)} />
+      )}
+      {activePage === "terms" && (
+        <PureTermsOfServicePage onBack={() => setActivePage(null)} />
+      )}
+      {activePage === "shipping" && (
+        <PureShippingPage onBack={() => setActivePage(null)} />
+      )}
+      {activePage === "returns" && (
+        <PureReturnsPage onBack={() => setActivePage(null)} />
+      )}
+      <PureFooter onPageChange={(page) => setActivePage(page)} />
 
       {selectedProduct && (
         <PureProductModal
@@ -169,4 +207,4 @@ export default function App() {
       />
     </div>
   );
-}  
+}

@@ -39,7 +39,7 @@ export function PureHeader({ cartItemCount, onCartClick }) {
       <div className="homepage-topbar">
         <div className="homepage-topbar-content">
           ✉ Support:{" "}
-          <a style={{textDecoration: "none"}} href="mailto:peektrend.tech@gmail.com">Avaliable Support 24/7</a>
+          <a style={{textDecoration: "none"}} href="mailto:peektrend.tech@gmail.com">peektrend.tech@gmail.com</a>
           <span className="separator">|</span>✅ 30-Day Return Guarantee
         </div>
       </div>

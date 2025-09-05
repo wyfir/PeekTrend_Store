@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useUser } from "@clerk/clerk-react";
+import FondyModal from "../components/FondyModal";
+import { useFondyCheckout } from "../hooks/useFondyCheckout";
 import "../styles/styles-pure-components.css";
 
 export function PureProductDetailPage({
@@ -10,6 +13,14 @@ export function PureProductDetailPage({
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "");
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { user } = useUser();
+
+  const { fondyUrl, openFondy, closeFondy, loading } = useFondyCheckout({
+    getUserMeta: () => ({
+      clerkId: user?.id,
+      clerkEmail: user?.emailAddresses?.[0]?.emailAddress,
+    }),
+  });
 
   const productImages = product.images || [];
 
@@ -17,9 +28,7 @@ export function PureProductDetailPage({
     return Array.from({ length: 5 }, (_, i) => (
       <svg
         key={i}
-        className={
-          i < Math.floor(rating) ? "pure-star" : "pure-star pure-star-empty"
-        }
+        className={i < Math.floor(rating) ? "pure-star" : "pure-star pure-star-empty"}
         fill="currentColor"
         viewBox="0 0 20 20"
       >
@@ -36,11 +45,32 @@ export function PureProductDetailPage({
 
   const handleAddToCart = () => {
     onAddToCart(quantity, selectedColor);
-    setIsCartOpen(true); // ✅ Automatically open sidebar
+    setIsCartOpen(true); // Open sidebar after adding
+  };
+
+  // One-off “Buy Now” payload for the current product
+  const buyNowItem = useMemo(
+    () => ({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price), // keep consistent with backend currency unit
+      quantity,
+      image: product.images?.[0],
+      selectedColor: selectedColor || null,
+      selectedSize: null,
+    }),
+    [product, quantity, selectedColor]
+  );
+
+  const handleBuyNow = async () => {
+    await openFondy([buyNowItem]); // opens Fondy modal
   };
 
   return (
     <div className="pure-component pure-product-detail">
+      {/* Reusable Fondy modal */}
+      <FondyModal url={fondyUrl} onClose={closeFondy} />
+
       <div className="pure-product-detail-container">
         <button onClick={onBack} className="pure-back-button">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
@@ -67,9 +97,7 @@ export function PureProductDetailPage({
                   key={index}
                   src={image}
                   alt={`${product.name} view ${index + 1}`}
-                  className={`pure-thumbnail ${
-                    selectedImageIndex === index ? "active" : ""
-                  }`}
+                  className={`pure-thumbnail ${selectedImageIndex === index ? "active" : ""}`}
                   onClick={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -89,6 +117,7 @@ export function PureProductDetailPage({
                   ${product.originalPrice}
                 </span>
               )}
+
               {product.for == "Hard Gaming" && (
                 <div className="for_type">
                   <div className="inside_type">
@@ -113,7 +142,6 @@ export function PureProductDetailPage({
                   </div>
                 </div>
               )}
-
               {product.for === "Hybrid" && (
                 <div className="for_type hybrid">
                   <div className="inside_type">
@@ -126,7 +154,6 @@ export function PureProductDetailPage({
                   </div>
                 </div>
               )}
-
               {product.for === "Streaming" && (
                 <div className="for_type streaming">
                   <div className="inside_type streaming">
@@ -150,6 +177,16 @@ export function PureProductDetailPage({
               </span>
             </div>
 
+            {product.stock !== undefined && (
+              <p className="pure-product-stock">
+                {product.stock > 0 ? (
+                  <span>{product.stock} left in stock</span>
+                ) : (
+                  <span className="pure-out-of-stock">Out of Stock</span>
+                )}
+              </p>
+            )}
+
             <p className="pure-product-detail-description">
               {product.description}
             </p>
@@ -157,17 +194,13 @@ export function PureProductDetailPage({
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div className="pure-color-selector">
-                <label className="pure-color-label">
-                  Color: {selectedColor}
-                </label>
+                <label className="pure-color-label">Color: {selectedColor}</label>
                 <div className="pure-color-options">
                   {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`pure-color-option ${
-                        selectedColor === color ? "selected" : ""
-                      }`}
+                      className={`pure-color-option ${selectedColor === color ? "selected" : ""}`}
                     >
                       {color}
                     </button>
@@ -189,9 +222,7 @@ export function PureProductDetailPage({
                 <input
                   type="number"
                   value={quantity}
-                  onChange={(e) =>
-                    handleQuantityChange(parseInt(e.target.value) || 1)
-                  }
+                  onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
                   className="pure-quantity-input"
                   min="1"
                 />
@@ -204,9 +235,19 @@ export function PureProductDetailPage({
               </div>
             </div>
 
-            {/* Add to Cart Button */}
+            {/* Add to Cart */}
             <button onClick={handleAddToCart} className="pure-add-to-cart">
               ADD TO CART - ${(product.price * quantity).toFixed(2)}
+            </button>
+
+            {/* Buy Now (opens Fondy modal here) */}
+            <button
+              onClick={handleBuyNow}
+              className="pure-checkout-button"
+              disabled={loading}
+              style={{ marginTop: 12, width: "100%" }}
+            >
+              {loading ? "Starting checkout..." : "BUY NOW"}
             </button>
 
             {/* Features */}
@@ -216,11 +257,7 @@ export function PureProductDetailPage({
                 <ul className="pure-features-list">
                   {product.features.map((feature, index) => (
                     <li key={index} className="pure-feature-item">
-                      <svg
-                        className="pure-feature-icon"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
+                      <svg className="pure-feature-icon" fill="currentColor" viewBox="0 0 20 20">
                         <path
                           fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -250,6 +287,7 @@ export function PureProductDetailPage({
             )}
           </div>
         </div>
+
         {product.feedbacks && product.feedbacks.length > 0 && (
           <div className="pure-feedback-section">
             <h3 className="pure-feedback-title">Customer Feedback</h3>
@@ -269,12 +307,8 @@ export function PureProductDetailPage({
                     />
                     <div className="pure-feedback-userblock">
                       <div className="pure-feedback-userline">
-                        <p className="pure-feedback-username">
-                          {feedback.user}
-                        </p>
-                        <span className="pure-feedback-verified">
-                          ✔ Verified Buyer
-                        </span>
+                        <p className="pure-feedback-username">{feedback.user}</p>
+                        <span className="pure-feedback-verified">✔ Verified Buyer</span>
                       </div>
                       <div className="pure-feedback-stars">
                         {Array.from({ length: 5 }, (_, i) => (

@@ -451,3 +451,35 @@ html {
 
   width: 90px;
 }
+
+
+
+.pure-product-stock {
+  /* margin-top: 3px; */
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d7a2d; /* green if in stock */
+}
+
+.pure-out-of-stock {
+  color: #c62828; /* red for out of stock */
+  font-weight: 600;
+}
+
+html.no-scroll, body.no-scroll {
+  overflow: hidden !important;
+}
+
+.success-animation {
+height: 80px;
+  margin: 0 auto;
+  display: block;
+}
+
+
+
+/* in styles-pure-components.css */
+.sp-eta { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px 16px; text-align:center; margin-top:10px; }
+.sp-eta-title { color:#6b7280; font-size:13px; }
+.sp-eta-date { color:#111827; font-weight:700; font-size:14px; margin-top:2px; }
+.sp-eta-sub { color:#6b7280; font-size:12px; margin-top:2px; }

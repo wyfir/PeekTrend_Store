@@ -1,58 +1,67 @@
+// src/components/PureCartSidebar.jsx
 import "../styles/styles-pure-components.css";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "@clerk/clerk-react";
-import { API_BASE_URL } from "../config";
+import { useState, useEffect, useCallback, useRef } from "react";
+
 export function PureCartSidebar({
   isOpen,
-  onClose,
+  onClose,            // parent sets isCartOpen(false)
   items,
   total,
   onUpdateQuantity,
   onRemoveItem,
+  onCheckout,         // parent callback to run AFTER the panel fully closes (navigate('/checkout'))
 }) {
-  if (!isOpen) return null;
+  const [isClosing, setIsClosing] = useState(false);
+  const shouldRender = isOpen || isClosing;
 
-  const navigate = useNavigate();
-  const { user } = useUser(); // ✅ must be inside the component
-  const referrer = localStorage.getItem("pendingReferrer");
-  const handleCheckout = async () => {
-    try {
-      const referrer = localStorage.getItem("pendingReferrer"); // ✅ this is great
+  // holds a function to run after close animation completes
+  const afterCloseRef = useRef(null);
 
-      const res = await fetch(
-        `${API_BASE_URL}/api/create-checkout-session`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            items,
-            clerkId: user?.id,
-            clerkEmail: user?.emailAddresses?.[0]?.emailAddress,
-            referrer: referrer || "direct", // ✅ fallback for no ref
-          }),
-        }
-      );
+  useEffect(() => {
+    if (isOpen) setIsClosing(false);
+  }, [isOpen]);
 
-      const { url } = await res.json();
+  const startClosing = useCallback(() => {
+    if (!isClosing) setIsClosing(true);
+  }, [isClosing]);
 
-      if (url) {
-        window.location.href = url;
-      } else {
-        alert("Failed to create checkout session");
-      }
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("Something went wrong with checkout");
+  const handleSidebarAnimationEnd = (e) => {
+    if (isClosing && e.currentTarget === e.target) {
+      onClose?.(); // parent unmounts the sidebar (isCartOpen=false)
+
+      // run any pending "after close" action (e.g., navigate to /checkout)
+      const fn = afterCloseRef.current;
+      afterCloseRef.current = null;
+      if (fn) fn();
+
+      setIsClosing(false);
     }
   };
 
+  const handleCheckoutClick = () => {
+    if (!items?.length) return;
+    // schedule navigating (or any action) AFTER close completes
+    afterCloseRef.current = () => onCheckout?.(items);
+    startClosing();
+  };
+
+  if (!shouldRender) return null;
+
   return (
     <>
-      <div className="pure-sidebar-overlay" onClick={onClose} />
-      <div className="pure-sidebar">
+      {/* Overlay */}
+      <div
+        className={`pure-sidebar-overlay ${isClosing ? "closing" : ""}`}
+        onClick={startClosing}
+      />
+      {/* Sidebar panel */}
+      <div
+        className={`pure-sidebar ${isClosing ? "closing" : ""}`}
+        onAnimationEnd={handleSidebarAnimationEnd}
+      >
         <div className="pure-sidebar-header">
           <h2 className="pure-sidebar-title">Shopping Cart</h2>
-          <button onClick={onClose} className="pure-sidebar-close">
+          <button onClick={startClosing} className="pure-sidebar-close" aria-label="Close cart">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -75,11 +84,7 @@ export function PureCartSidebar({
                   key={`${item.id}-${item.selectedColor}-${item.selectedSize}-${index}`}
                   className="pure-cart-item"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="pure-cart-item-image"
-                  />
+                  <img src={item.image} alt={item.name} className="pure-cart-item-image" />
                   <div className="pure-cart-item-details">
                     <h3 className="pure-cart-item-name">{item.name}</h3>
                     {(item.selectedColor || item.selectedSize) && (
@@ -89,19 +94,11 @@ export function PureCartSidebar({
                         {item.selectedSize && `Size: ${item.selectedSize}`}
                       </p>
                     )}
-                    <p className="pure-cart-item-price">
-                      ${item.price.toFixed(2)}
-                    </p>
+                    <p className="pure-cart-item-price">${item.price.toFixed(2)}</p>
                   </div>
                   <div className="pure-cart-item-controls">
                     <button
-                      onClick={() =>
-                        onRemoveItem(
-                          item.id,
-                          item.selectedColor,
-                          item.selectedSize
-                        )
-                      }
+                      onClick={() => onRemoveItem(item.id, item.selectedColor, item.selectedSize)}
                       className="pure-cart-remove"
                     >
                       Remove
@@ -109,12 +106,7 @@ export function PureCartSidebar({
                     <div className="pure-cart-quantity">
                       <button
                         onClick={() =>
-                          onUpdateQuantity(
-                            item.id,
-                            item.quantity - 1,
-                            item.selectedColor,
-                            item.selectedSize
-                          )
+                          onUpdateQuantity(item.id, item.quantity - 1, item.selectedColor, item.selectedSize)
                         }
                         className="pure-cart-quantity-button"
                       >
@@ -136,12 +128,7 @@ export function PureCartSidebar({
                       />
                       <button
                         onClick={() =>
-                          onUpdateQuantity(
-                            item.id,
-                            item.quantity + 1,
-                            item.selectedColor,
-                            item.selectedSize
-                          )
+                          onUpdateQuantity(item.id, item.quantity + 1, item.selectedColor, item.selectedSize)
                         }
                         className="pure-cart-quantity-button"
                       >
@@ -160,7 +147,11 @@ export function PureCartSidebar({
             <div className="pure-cart-total">
               <span>Total: ${total.toFixed(2)}</span>
             </div>
-            <button onClick={handleCheckout} className="pure-checkout-button">
+            <button
+              onClick={handleCheckoutClick}
+              className="pure-checkout-button"
+              disabled={isClosing}
+            >
               Proceed to Checkout
             </button>
           </div>

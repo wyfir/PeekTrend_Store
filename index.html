@@ -1,13 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#000000" />
+    <title>PeekTrend</title>
+    <script type="module" src="https://unpkg.com/ipsp-js-sdk@latest/dist/checkout.min.js"></script>
+
+    <script src="https://unpkg.com/ipsp-js-sdk@latest/dist/checkout.min.js
+"></script>
   </head>
   <body>
+    <!-- Your React app -->
     <div id="root"></div>
+    <script type="module" src="https://unpkg.com/ipsp-js-sdk@latest/dist/checkout.min.js"></script>
+
+    <script src="https://unpkg.com/ipsp-js-sdk@latest/dist/checkout.min.js
+"></script>
+    <!-- ✅ Persistent Fondy wrapper (required by the popup widget) -->
+    <!-- Keep this outside React so it never unmounts -->
+    <div id="fondy-checkout-root"></div>
+
+    <!-- Vite entry -->
     <script type="module" src="/src/main.jsx"></script>
+    <script
+      src="https://unpkg.com/ipsp-js-sdk@latest/dist/checkout.min.js"
+      data-fondy="1"
+    ></script>
+    <script src="https://pay.fondy.eu/static_common/v1/checkout/ipsp.js"></script>
   </body>
 </html>

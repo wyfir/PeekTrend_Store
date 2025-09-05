@@ -1,3 +1,4 @@
+// PureHeader.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -23,15 +24,24 @@ export function PureHeader({ cartItemCount, onCartClick }) {
     setIsAccountOpen(false);
   }, [location.pathname]);
 
-  // Close account dropdown on outside click
+  // Helper: is the click inside any Clerk portal element?
+  const isClerkClick = (el) =>
+    !!el?.closest?.(
+      ".cl-root, .cl-userButton-root, [data-clerk], [data-cl-component]"
+    );
+
+  // Close account dropdown on outside click, but IGNORE Clerk UI clicks
   useEffect(() => {
     const handleClickOutside = (e) => {
+      if (isClerkClick(e.target)) return; // let Clerk popover handle it
       if (accountRef.current && !accountRef.current.contains(e.target)) {
         setIsAccountOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    // capture phase helps catch it before other handlers
+    document.addEventListener("mousedown", handleClickOutside, true);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside, true);
   }, []);
 
   return (
@@ -39,33 +49,29 @@ export function PureHeader({ cartItemCount, onCartClick }) {
       <div className="homepage-topbar">
         <div className="homepage-topbar-content">
           ✉ Support:{" "}
-          <a style={{textDecoration: "none"}} href="mailto:peektrend.tech@gmail.com">peektrend.tech@gmail.com</a>
+          <a style={{ textDecoration: "none" }} href="mailto:support@peektrend.com">
+            support@peektrend.com
+          </a>
           <span className="separator">|</span>✅ 30-Day Return Guarantee
         </div>
       </div>
+
       <header className="homepage-header">
         <div className="homepage-header-container">
           <div onClick={() => navigate("/")} className="homepage-logo">
-            <img
-              src="/peektrend_logo.svg"
-              alt="Logo"
-              style={{ height: "40px" }}
-            />
+            <img src="/peektrend_logo.svg" alt="Logo" style={{ height: "40px" }} />
           </div>
 
           <nav className="homepage-nav">
             {["/", "/products", "/reviews"].map((path, i) => {
               const names = ["Home", "Products", "Reviews"];
+              const active =
+                location.pathname === path ||
+                (path === "/products" && location.pathname.startsWith("/products"));
               return (
                 <button
                   key={path}
-                  className={`homepage-nav-link ${
-                    location.pathname === path ||
-                    (path === "/products" &&
-                      location.pathname.startsWith("/products"))
-                      ? "active"
-                      : ""
-                  }`}
+                  className={`homepage-nav-link ${active ? "active" : ""}`}
                   onClick={() => navigate(path)}
                 >
                   {names[i]}
@@ -89,6 +95,7 @@ export function PureHeader({ cartItemCount, onCartClick }) {
               >
                 Account
               </button>
+
               {isAccountOpen && (
                 <div className="account-dropdown">
                   <SignedOut>
@@ -101,7 +108,9 @@ export function PureHeader({ cartItemCount, onCartClick }) {
                   </SignedOut>
 
                   <SignedIn>
-                    <UserButton />
+                    {/* Make sure sign-out lands somewhere sensible */}
+                    <UserButton afterSignOutUrl="/" />
+
                     <button
                       className="account-action"
                       onClick={() => {
@@ -133,6 +142,9 @@ export function PureHeader({ cartItemCount, onCartClick }) {
             <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
               {["/", "/products", "/reviews"].map((path, i) => {
                 const names = ["Home", "Products", "Reviews"];
+                const active =
+                  location.pathname === path ||
+                  (path === "/products" && location.pathname.startsWith("/products"));
                 return (
                   <button
                     key={path}
@@ -140,13 +152,7 @@ export function PureHeader({ cartItemCount, onCartClick }) {
                       navigate(path);
                       setIsMobileMenuOpen(false);
                     }}
-                    className={`homepage-nav-link ${
-                      location.pathname === path ||
-                      (path === "/products" &&
-                        location.pathname.startsWith("/products"))
-                        ? "active"
-                        : ""
-                    }`}
+                    className={`homepage-nav-link ${active ? "active" : ""}`}
                   >
                     {names[i]}
                   </button>

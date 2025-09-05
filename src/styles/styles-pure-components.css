@@ -1350,3 +1350,296 @@
   object-fit: contain;
   align-self: flex-start;
 }
+
+
+
+
+
+
+
+
+/* if you don't already have these: */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* NEW: slide out & fade out */
+@keyframes slideOutRight {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; } to { opacity: 0; }
+}
+
+/* Opening (what you already had) */
+.pure-sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: 100%; max-width: 400px; height: 100vh;
+  background: white; z-index: 101;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  animation: slideInRight 0.3s ease-out forwards;
+}
+.pure-sidebar-overlay {
+  position: fixed; inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  animation: fadeIn 0.2s forwards;
+}
+
+/* Closing */
+.pure-sidebar.closing {
+  animation: slideOutRight 0.28s ease-in forwards; /* slightly snappier out */
+}
+.pure-sidebar-overlay.closing {
+  animation: fadeOut 0.2s forwards;
+}
+
+
+
+/* Keep Clerk's popover above your overlays and prevent accidental closes */
+.cl-root,
+.cl-userButton-root,
+[data-clerk],
+[data-cl-component] {
+  position: relative;
+  z-index: 10000 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== Success Page (mobile-first) ===== */
+
+.sp-wrap {
+  font-family: 'Open-Sans', sans-serif;
+  background: #f6f7fb;
+  min-height: 60vh;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.sp-card {
+  width: 100%;
+  max-width: 760px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(3, 2, 19, 0.08);
+  padding: 20px;
+}
+
+@media (min-width: 640px) {
+  .sp-card { padding: 28px; border-radius: 18px; }
+}
+
+.sp-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.sp-title {
+  margin: 8px 0 4px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #111325;
+}
+
+.sp-sub {
+  color: #717182;
+  font-size: 14px;
+}
+
+.sp-icon {
+  margin: 0 auto 8px auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 28px;
+  color: #fff;
+}
+.sp-icon-ok { background: #17b26a; }
+.sp-icon-warn { background: #f59e0b; }
+.sp-icon-error { background: #ef4444; }
+
+.sp-badge {
+  display: inline-block;
+    margin: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+.sp-badge-ok { background: #e8f7ef; color: #0a7d46; }
+.sp-badge-warn { background: #fff6e5; color: #9a6a07; }
+.sp-badge-error { background: #ffe8e8; color: #b01818; }
+
+.sp-section { margin-top: 18px; }
+.sp-h2 {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111325;
+  margin-bottom: 10px;
+      margin-top: 35px;
+}
+
+.sp-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 480px) {
+  .sp-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.sp-kv {
+  background: #fafafa;
+  border: 1px solid #f0f1f5;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sp-k { color: #7f8395; font-size: 13px; }
+.sp-v { color: #111325; font-weight: 700; }
+
+.sp-address {
+  background: #fafafa;
+  border: 1px solid #f0f1f5;
+  border-radius: 12px;
+  padding: 12px;
+  line-height: 1.5;
+  color: #111325;
+  font-style: normal;
+}
+
+.sp-items {
+  border: 1px solid #f0f1f5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.sp-item {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  padding: 10px;
+  gap: 12px;
+  border-top: 1px solid #f0f1f5;
+}
+.sp-item:first-child { border-top: 0; }
+.sp-item-img {
+  width: 56px; height: 56px; object-fit: cover; border-radius: 8px;
+  background: #f4f6f8;
+}
+.sp-item-ph { width: 56px; height: 56px; border-radius: 8px; background: #f4f6f8; }
+.sp-item-main { min-width: 0; }
+.sp-item-name {
+  font-size: 14px; font-weight: 700; color: #111325;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.sp-item-meta { font-size: 12px; color: #7f8395; margin-top: 2px; }
+.sp-item-price { font-weight: 700; color: #111325; font-size: 14px; }
+
+.sp-totals {
+  border-top: 1px dashed #eceef3;
+  padding-top: 12px;
+}
+.sp-row {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 6px 0; color: #33354d;
+}
+.sp-row-total {
+  margin-top: 4px; padding-top: 10px;
+  border-top: 1px solid #f0f1f5; font-size: 16px;
+}
+
+.sp-actions {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 480px) {
+  .sp-actions { grid-template-columns: 1fr 1fr; }
+}
+
+.sp-btn {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .02s ease, background-color .2s ease, border-color .2s ease;
+}
+.sp-btn:active { transform: translateY(1px); }
+.sp-btn-primary {
+  background: #111325; color: #fff;
+}
+.sp-btn-primary:hover { background: #1a1c33; }
+.sp-btn-ghost {
+  background: #fff; color: #111325; border-color: #e7e8ee;
+}
+.sp-btn-ghost:hover { background: #f7f7fb; }
+
+.sp-help {
+  text-align: center;
+  color: #7f8395;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Loading state bits */
+.sp-loader {
+  width: 60px; height: 60px; margin: 0 auto 8px auto;
+  border-radius: 50%;
+  border: 3px solid #e6e8f1;
+  border-top-color: #111325;
+  animation: sp-spin 0.9s linear infinite;
+}
+@keyframes sp-spin { to { transform: rotate(360deg); } }
+
+.sp-skeleton {
+  margin-top: 10px;
+  height: 140px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f6f7fb 25%, #eceff5 37%, #f6f7fb 63%);
+  background-size: 400% 100%;
+  animation: sp-shine 1.2s infinite;
+}
+@keyframes sp-shine { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+.pure-form .grid input {
+  border-radius: 4px;
+}

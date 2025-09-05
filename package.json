@@ -14,6 +14,7 @@
     "@clerk/nextjs": "^6.25.5",
     "country-flag-icons": "^1.5.19",
     "flag-icons": "^7.5.0",
+    "ipsp-js-sdk": "^2.0.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.0",

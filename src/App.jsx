@@ -1,5 +1,7 @@
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
+import TrackOrderPage from "./pages/TrackOrderPage.jsx";
 import { PureHeader } from "./components/PureHeader.jsx";
 import { PureProductModal } from "./components/PureProductModal.jsx";
 import { PureCartSidebar } from "./components/PureCartSidebar.jsx";
@@ -11,7 +13,7 @@ import { AboutUsPage } from "./pages/AboutUsPage.jsx";
 import { ContactPage } from "./pages/ContactPage.jsx";
 import { FAQPage } from "./pages/FAQPage.jsx";
 import { ReviewsPage } from "./pages/ReviewsPage.jsx";
-import { CheckoutPage } from "./pages/CheckoutPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
 import PureHomepage from "./components/PureHomepage.jsx";
 import { ProfilePage } from "./pages/ProfilePage.jsx";
 import "./styles/styles-homepage.css";
@@ -29,6 +31,9 @@ import {
   PureReturnsPage,
 } from "./components/PurePages.jsx";
 
+import FondyModal from "./components/FondyModal";
+import { useFondyCheckout } from "./hooks/useFondyCheckout";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -38,18 +43,37 @@ export default function App() {
   const [products, setProducts] = useState([]);
   const [activePage, setActivePage] = useState(null);
 
+  const { user } = useUser();
+  const { fondyUrl, openFondy, closeFondy } = useFondyCheckout({
+    getUserMeta: () => ({
+      clerkId: user?.id,
+      clerkEmail: user?.emailAddresses?.[0]?.emailAddress,
+    }),
+  });
+
+  const navigate = useNavigate();
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("ref");
-
     if (ref) {
       localStorage.setItem("referrer", ref);
-
-      // Optional: clean URL after storing
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, "", cleanUrl);
     }
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const email = user?.emailAddresses?.[0]?.emailAddress;
+    if (!email) return;
+
+    // Link any guest orders by email to this Clerk user
+    fetch(`${API_BASE_URL}/api/orders/link-my-orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, email }), // DEV version
+    }).catch(() => {});
+  }, [user]);
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products/phone-coolers`)
       .then((res) => res.json())
@@ -113,12 +137,23 @@ export default function App() {
   );
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  // NEW: called by PureCartSidebar when user clicks "Proceed to Checkout"
+  const handleCartCheckout = async (items /*, smoothCloseCb? */) => {
+    if (!items?.length) return;
+    // Start fetching the Fondy checkout URL; the sidebar animates itself closed.
+    await openFondy(items); // when it resolves, FondyModal will show via fondyUrl
+  };
+
   return (
     <div>
       <PureHeader
         cartItemCount={cartItemCount}
         onCartClick={() => setIsCartOpen(true)}
       />
+
+      {/* Top-level Fondy modal so it stays visible after the cart unmounts */}
+      <FondyModal url={fondyUrl} onClose={closeFondy} />
+
       {activePage === null && (
         <Routes>
           <Route
@@ -146,11 +181,10 @@ export default function App() {
             element={
               <PureProductDetailPageWrapper
                 onAddToCart={addToCart}
-                setIsCartOpen={setIsCartOpen} // ✅ pass this too
+                setIsCartOpen={setIsCartOpen}
               />
             }
           />
-          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -161,8 +195,19 @@ export default function App() {
           <Route path="/returns" element={<PureReturnsPage />} />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/orders/track" element={<TrackOrderPage />} />
+          <Route
+            path="/checkout"
+            element={
+              <CheckoutPage
+                cartItems={cartItems}
+                clearCart={() => setCartItems([])} // optional (use on success if you want)
+              />
+            }
+          />
         </Routes>
       )}
+
       {activePage === "faq" && (
         <PureFAQPage onBack={() => setActivePage(null)} />
       )}
@@ -184,6 +229,7 @@ export default function App() {
       {activePage === "returns" && (
         <PureReturnsPage onBack={() => setActivePage(null)} />
       )}
+
       <PureFooter onPageChange={(page) => setActivePage(page)} />
 
       {selectedProduct && (
@@ -204,6 +250,7 @@ export default function App() {
         total={cartTotal}
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
+        onCheckout={() => navigate("/checkout")} // 👈 navigate AFTER close animation
       />
     </div>
   );

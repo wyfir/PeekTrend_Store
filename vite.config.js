@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     allowedHosts: [
       '3f4286a9e84b.ngrok-free.app', // your ngrok URL
-      'localhost',                   // keep localhost for dev
+      'https://peektrend-backend-uaoe.onrender.com/',                   // keep localhost for dev
     ],
   },
 })

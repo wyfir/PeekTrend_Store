@@ -1,4 +1,3 @@
-// src/pages/CheckoutPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { API_BASE_URL } from "../config";
@@ -28,11 +27,23 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
   );
 
   useEffect(() => {
-    if (user?.fullName && !form.fullName) {
-      setForm((f) => ({ ...f, fullName: user.fullName }));
-    }
+    // Prefill name and email
+    if (user?.fullName && !form.fullName) setForm(f => ({ ...f, fullName: user.fullName }));
     const email = user?.emailAddresses?.[0]?.emailAddress;
-    if (email && !form.email) setForm((f) => ({ ...f, email }));
+    if (email && !form.email) setForm(f => ({ ...f, email }));
+
+    // Auto-detect country/region by IP if not already set
+    if (!form.country || form.country === "US") {
+      fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(data => {
+          if (data?.country) setForm(f => ({ ...f, country: data.country }));
+          if (data?.region_code) setForm(f => ({ ...f, region: data.region_code }));
+        })
+        .catch(() => {
+          // fail silently if API fails
+        });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -148,9 +159,15 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
               <div className={`co-field ${errors.fullName ? "has-error" : ""}`}>
                 <label htmlFor="fullName">Full name</label>
                 <input
-                  id="fullName" name="fullName" autoComplete="name"
-                  value={form.fullName} onChange={update} disabled={submitting}
-                  aria-invalid={!!errors.fullName} className="co-input" placeholder="John Appleseed"
+                  id="fullName"
+                  name="fullName"
+                  autoComplete="name"
+                  value={form.fullName}
+                  onChange={update}
+                  disabled={submitting}
+                  aria-invalid={!!errors.fullName}
+                  className="co-input"
+                  placeholder="John Appleseed"
                 />
                 {errors.fullName && <small className="co-err">{errors.fullName}</small>}
               </div>
@@ -158,19 +175,37 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
               <div className={`co-field ${errors.email ? "has-error" : ""}`}>
                 <label htmlFor="email">Email</label>
                 <input
-                  id="email" name="email" type="email" autoComplete="email"
-                  value={form.email} onChange={update} disabled={submitting}
-                  aria-invalid={!!errors.email} className="co-input" placeholder="you@example.com"
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={update}
+                  disabled={submitting}
+                  aria-invalid={!!errors.email}
+                  className="co-input"
+                  placeholder="you@example.com"
                 />
-                {errors.email && <small className="co-err">{errors.email}</small>}
+                {errors.email ? (
+                  <small className="co-err">{errors.email}</small>
+                ) : (
+                  <p className="co-fineprint">
+                    A receipt and order updates will be sent to this email address.
+                  </p>
+                )}
               </div>
 
               <div className="co-field">
                 <label htmlFor="phone">Phone <span className="co-optional">(optional)</span></label>
                 <input
-                  id="phone" name="phone" autoComplete="tel"
-                  value={form.phone} onChange={update} disabled={submitting}
-                  className="co-input" placeholder="+1 555 555 5555"
+                  id="phone"
+                  name="phone"
+                  autoComplete="tel"
+                  value={form.phone}
+                  onChange={update}
+                  disabled={submitting}
+                  className="co-input"
+                  placeholder="+1 555 555 5555"
                 />
               </div>
             </div>
@@ -180,8 +215,13 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
               <div className={`co-field ${errors.country ? "has-error" : ""}`}>
                 <label htmlFor="country">Country/Region</label>
                 <select
-                  id="country" name="country" value={form.country} onChange={update}
-                  disabled={submitting} aria-invalid={!!errors.country} className="co-input"
+                  id="country"
+                  name="country"
+                  value={form.country}
+                  onChange={update}
+                  disabled={submitting}
+                  aria-invalid={!!errors.country}
+                  className="co-input"
                 >
                   <option value="US">United States</option>
                   <option value="GB">United Kingdom</option>
@@ -202,9 +242,15 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
               <div className={`co-field ${errors.line1 ? "has-error" : ""}`}>
                 <label htmlFor="line1">Address line 1</label>
                 <input
-                  id="line1" name="line1" autoComplete="address-line1"
-                  value={form.line1} onChange={update} disabled={submitting}
-                  aria-invalid={!!errors.line1} className="co-input" placeholder="123 Market St"
+                  id="line1"
+                  name="line1"
+                  autoComplete="address-line1"
+                  value={form.line1}
+                  onChange={update}
+                  disabled={submitting}
+                  aria-invalid={!!errors.line1}
+                  className="co-input"
+                  placeholder="123 Market St"
                 />
                 {errors.line1 && <small className="co-err">{errors.line1}</small>}
               </div>
@@ -212,9 +258,14 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
               <div className="co-field">
                 <label htmlFor="line2">Address line 2 <span className="co-optional">(optional)</span></label>
                 <input
-                  id="line2" name="line2" autoComplete="address-line2"
-                  value={form.line2} onChange={update} disabled={submitting}
-                  className="co-input" placeholder="Apt, suite, etc."
+                  id="line2"
+                  name="line2"
+                  autoComplete="address-line2"
+                  value={form.line2}
+                  onChange={update}
+                  disabled={submitting}
+                  className="co-input"
+                  placeholder="Apt, suite, etc."
                 />
               </div>
 
@@ -222,9 +273,15 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
                 <div className={`co-field ${errors.city ? "has-error" : ""}`}>
                   <label htmlFor="city">City</label>
                   <input
-                    id="city" name="city" autoComplete="address-level2"
-                    value={form.city} onChange={update} disabled={submitting}
-                    aria-invalid={!!errors.city} className="co-input" placeholder="San Francisco"
+                    id="city"
+                    name="city"
+                    autoComplete="address-level2"
+                    value={form.city}
+                    onChange={update}
+                    disabled={submitting}
+                    aria-invalid={!!errors.city}
+                    className="co-input"
+                    placeholder="San Francisco"
                   />
                   {errors.city && <small className="co-err">{errors.city}</small>}
                 </div>
@@ -232,18 +289,29 @@ export default function CheckoutPage({ cartItems = [], clearCart }) {
                 <div className="co-field">
                   <label htmlFor="region">State/Region</label>
                   <input
-                    id="region" name="region" autoComplete="address-level1"
-                    value={form.region} onChange={update} disabled={submitting}
-                    className="co-input" placeholder="CA"
+                    id="region"
+                    name="region"
+                    autoComplete="address-level1"
+                    value={form.region}
+                    onChange={update}
+                    disabled={submitting}
+                    className="co-input"
+                    placeholder="CA"
                   />
                 </div>
 
                 <div className={`co-field ${errors.postalCode ? "has-error" : ""}`}>
                   <label htmlFor="postalCode">ZIP / Postal code</label>
                   <input
-                    id="postalCode" name="postalCode" autoComplete="postal-code"
-                    value={form.postalCode} onChange={update} disabled={submitting}
-                    aria-invalid={!!errors.postalCode} className="co-input" placeholder="94103"
+                    id="postalCode"
+                    name="postalCode"
+                    autoComplete="postal-code"
+                    value={form.postalCode}
+                    onChange={update}
+                    disabled={submitting}
+                    aria-invalid={!!errors.postalCode}
+                    className="co-input"
+                    placeholder="94103"
                   />
                   {errors.postalCode && <small className="co-err">{errors.postalCode}</small>}
                 </div>
@@ -319,14 +387,14 @@ const CSS = `
 .co-wrap { max-width: 980px; margin: 0 auto; padding: 16px; color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
 .co-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:end; gap:8px; margin-bottom:12px; }
 .co-title { font-size: 20px; font-weight: 700; margin:0; }
-.co-secure { display:flex; margin-top: 5px; align-items:center; gap:6px; color:#2f2f2f; font-size: 13px; }
+.co-secure { display:flex; margin-top: 10px; align-items:center; gap:6px; color:#2f2f2f; font-size: 13px; }
 .co-accept { color: var(--muted); font-size: 13px; }
 .co-grid { display:grid; grid-template-columns: 1fr; gap:16px; }
 .co-card { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 16px; }
 .co-steps { display:flex; gap:12px; font-size:13px; color: var(--muted); border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:12px; }
 .co-steps .active { color: var(--ink); font-weight:600; }
-.co-h2 { font-size:14px; font-weight:700; margin: 19px 0 10px; }
-.co-group { display:grid; gap:10px; }
+.co-h2 { font-size:14px; font-weight:700; margin: 29px 0 15px; }
+.co-group { display:grid; gap:12px; }
 .co-row { display:grid; grid-template-columns: 1fr; gap:10px; }
 .co-field label { display:block; font-size:13px; color:#2f2f2f; margin-bottom:4px; }
 .co-optional { color: var(--muted); font-weight:400; }
@@ -336,20 +404,20 @@ const CSS = `
 .co-err { color:#8b0000; font-size:12px; margin-top:4px; }
 .co-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 14px; border:1px solid #1a1a1a; background:#1a1a1a; color:#fff; font-weight:700; font-size:14px; border-radius:4px; cursor:pointer; }
 .co-btn[disabled] { opacity:.7; cursor:not-allowed; }
-.co-btn-block { width:100%; margin-top:10px; }
+.co-btn-block { width:100%; margin-top:25px; }
 .co-spinner { width:16px; height:16px; border:2px solid #fff; border-right-color:transparent; border-radius:50%; animation:co-spin .8s linear infinite; }
 @keyframes co-spin { to { transform: rotate(360deg); } }
-.co-fineprint { color: var(--muted); font-size:12px; margin-top:10px; }
+.co-fineprint { color: var(--muted); font-size:12px; margin-top:6px; }
 .co-items { display:grid; gap:8px; margin-top:4px; }
 .co-item { display:grid; grid-template-columns: auto 1fr auto; gap:12px; align-items:center; }
 .co-thumb { position:relative; width:52px; height:52px; border-radius:4px; overflow:hidden; background:#f4f4f5; border:1px solid var(--line); }
 .co-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
 .co-thumb-ph { width:100%; height:100%; background:#eee; }
 .co-qty { position:absolute; bottom:-6px; right:-6px; background:#1a1a1a; color:#fff; font-size:11px; padding:2px 6px; border-radius:3px; border:1px solid #fff; }
-.co-item-name { font-weight:600; font-size:14px; }
+.co-item-name { font-weight:600; font-size:10px; }
 .co-item-meta { color: var(--muted); font-size:12px; }
 .co-price { font-weight:700; font-size:14px; }
-.co-totals { border-top:1px solid var(--line); margin-top:8px; padding-top:8px; display:grid; gap:6px; }
+.co-totals { border-top:1px solid var(--line); margin-top:15px; padding-top:8px; display:grid; gap:6px; }
 .co-row-line { display:flex; justify-content:space-between; align-items:center; }
 .co-total b { font-size:15px; }
 .co-note { color: var(--muted); font-size:12px; margin-top:8px; }

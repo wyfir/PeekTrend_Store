@@ -394,7 +394,7 @@
 .pure-product-info {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.1rem;
 }
 
 .pure-product-detail-title {
@@ -712,8 +712,7 @@
 }
 
 .pure-sidebar-close {
-  width: 2rem;
-  height: 2rem;
+  width: 5rem;
   border: none;
   background: none;
   cursor: pointer;
@@ -1644,3 +1643,38 @@
 .pure-form .grid input {
   border-radius: 4px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+.eta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line, #d9d9d9);
+  border-radius: 6px;           /* restrained, not bubbly */
+  background: #fff;
+  color: var(--ink, #111);
+  font-size: 14px;
+  line-height: 1.2;
+      width: 250px;
+}
+.eta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;         /* small circular icon holder */
+  border: 1px solid var(--line, #d9d9d9);
+}
+.eta-text b { font-weight: 700; }

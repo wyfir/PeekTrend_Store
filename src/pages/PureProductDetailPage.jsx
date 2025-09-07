@@ -3,6 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import FondyModal from "../components/FondyModal";
 import { useFondyCheckout } from "../hooks/useFondyCheckout";
 import "../styles/styles-pure-components.css";
+import DeliveryEtaBadge from "../components/DeliveryEtaBadge";
 
 export function PureProductDetailPage({
   product,
@@ -47,25 +48,6 @@ export function PureProductDetailPage({
     onAddToCart(quantity, selectedColor);
     setIsCartOpen(true); // Open sidebar after adding
   };
-
-  // One-off “Buy Now” payload for the current product
-  const buyNowItem = useMemo(
-    () => ({
-      id: product.id,
-      name: product.name,
-      price: Number(product.price), // keep consistent with backend currency unit
-      quantity,
-      image: product.images?.[0],
-      selectedColor: selectedColor || null,
-      selectedSize: null,
-    }),
-    [product, quantity, selectedColor]
-  );
-
-  const handleBuyNow = async () => {
-    await openFondy([buyNowItem]); // opens Fondy modal
-  };
-
   return (
     <div className="pure-component pure-product-detail">
       {/* Reusable Fondy modal */}
@@ -167,7 +149,7 @@ export function PureProductDetailPage({
                 </div>
               )}
             </div>
-
+              <DeliveryEtaBadge startOffsetDays={5} endOffsetDays={9} />
             <div className="pure-product-detail-rating">
               <div className="pure-product-detail-stars">
                 {renderStars(product.rating)}
@@ -238,16 +220,6 @@ export function PureProductDetailPage({
             {/* Add to Cart */}
             <button onClick={handleAddToCart} className="pure-add-to-cart">
               ADD TO CART - ${(product.price * quantity).toFixed(2)}
-            </button>
-
-            {/* Buy Now (opens Fondy modal here) */}
-            <button
-              onClick={handleBuyNow}
-              className="pure-checkout-button"
-              disabled={loading}
-              style={{ marginTop: 12, width: "100%" }}
-            >
-              {loading ? "Starting checkout..." : "BUY NOW"}
             </button>
 
             {/* Features */}

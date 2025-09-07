@@ -25,6 +25,10 @@ export function PureCartSidebar({
     if (!isClosing) setIsClosing(true);
   }, [isClosing]);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleSidebarAnimationEnd = (e) => {
     if (isClosing && e.currentTarget === e.target) {
       onClose?.(); // parent unmounts the sidebar (isCartOpen=false)
@@ -34,6 +38,9 @@ export function PureCartSidebar({
       afterCloseRef.current = null;
       if (fn) fn();
 
+      // always scroll to top after close
+      scrollToTop();
+
       setIsClosing(false);
     }
   };
@@ -41,7 +48,11 @@ export function PureCartSidebar({
   const handleCheckoutClick = () => {
     if (!items?.length) return;
     // schedule navigating (or any action) AFTER close completes
-    afterCloseRef.current = () => onCheckout?.(items);
+    afterCloseRef.current = () => {
+      onCheckout?.(items);
+      // ensure scroll also runs on checkout flow
+      scrollToTop();
+    };
     startClosing();
   };
 

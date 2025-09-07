@@ -737,6 +737,7 @@
 }
 
 .pure-sidebar-footer {
+  margin-bottom: 20px;
   padding: 1.5rem;
   border-top: 1px solid #e9ecef;
 }

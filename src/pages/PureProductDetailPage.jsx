@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
 import FondyModal from "../components/FondyModal";
 import { useFondyCheckout } from "../hooks/useFondyCheckout";
@@ -29,7 +29,9 @@ export function PureProductDetailPage({
     return Array.from({ length: 5 }, (_, i) => (
       <svg
         key={i}
-        className={i < Math.floor(rating) ? "pure-star" : "pure-star pure-star-empty"}
+        className={
+          i < Math.floor(rating) ? "pure-star" : "pure-star pure-star-empty"
+        }
         fill="currentColor"
         viewBox="0 0 20 20"
       >
@@ -48,6 +50,79 @@ export function PureProductDetailPage({
     onAddToCart(quantity, selectedColor);
     setIsCartOpen(true); // Open sidebar after adding
   };
+
+  // inside PureProductDetailPage component
+
+  // ---------------- SWIPE/DRAG LOGIC ----------------
+  const startXRef = useRef(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [direction, setDirection] = useState(null);
+
+  const goNext = () => {
+    setDirection("left");
+    setSelectedImageIndex((prev) =>
+      prev === productImages.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const goPrev = () => {
+    setDirection("right");
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? productImages.length - 1 : prev - 1
+    );
+  };
+
+  const handleTransitionEnd = () => {
+    setDragOffset(0);
+    setDirection(null);
+  };
+
+  // Touch
+  const handleTouchStart = (e) => {
+    startXRef.current = e.touches[0].clientX;
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const currentX = e.touches[0].clientX;
+    setDragOffset(currentX - startXRef.current);
+  };
+
+  const handleTouchEnd = () => {
+    finishDrag();
+  };
+
+  // Mouse
+  const handleMouseDown = (e) => {
+    startXRef.current = e.clientX;
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const currentX = e.clientX;
+    setDragOffset(currentX - startXRef.current);
+  };
+
+  const handleMouseUp = () => {
+    finishDrag();
+  };
+
+  const finishDrag = () => {
+    if (Math.abs(dragOffset) > 80) {
+      if (dragOffset < 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
+    }
+    setIsDragging(false);
+    setDragOffset(0);
+  };
+  // ---------------------------------------------------
+
   return (
     <div className="pure-component pure-product-detail">
       {/* Reusable Fondy modal */}
@@ -68,18 +143,45 @@ export function PureProductDetailPage({
         <div className="pure-product-detail-grid">
           {/* Product Gallery */}
           <div className="pure-product-gallery">
-            <img
-              src={productImages[selectedImageIndex]}
-              alt={product.name}
-              className="pure-main-image"
-            />
+            {/* Main image with swipe/drag */}
+            <div
+              className="pure-main-image-wrapper"
+              style={{ overflow: "hidden", width: "100%" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  transition: !isDragging ? "transform 0.3s ease" : "none",
+                  transform: `translateX(${dragOffset}px)`,
+                }}
+                onTransitionEnd={handleTransitionEnd}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={isDragging ? handleMouseUp : undefined}
+              >
+                <img
+                  src={productImages[selectedImageIndex]}
+                  alt={product.name}
+                  className="pure-main-image"
+                  style={{ flex: "0 0 100%" }}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                />
+              </div>
+            </div>
+
+            {/* Thumbnail Grid */}
             <div className="pure-thumbnail-grid">
               {productImages.map((image, index) => (
                 <img
                   key={index}
                   src={image}
                   alt={`${product.name} view ${index + 1}`}
-                  className={`pure-thumbnail ${selectedImageIndex === index ? "active" : ""}`}
+                  className={`pure-thumbnail ${
+                    selectedImageIndex === index ? "active" : ""
+                  }`}
                   onClick={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -149,7 +251,7 @@ export function PureProductDetailPage({
                 </div>
               )}
             </div>
-              <DeliveryEtaBadge startOffsetDays={5} endOffsetDays={9} />
+            <DeliveryEtaBadge startOffsetDays={5} endOffsetDays={9} />
             <div className="pure-product-detail-rating">
               <div className="pure-product-detail-stars">
                 {renderStars(product.rating)}
@@ -176,13 +278,17 @@ export function PureProductDetailPage({
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div className="pure-color-selector">
-                <label className="pure-color-label">Color: {selectedColor}</label>
+                <label className="pure-color-label">
+                  Color: {selectedColor}
+                </label>
                 <div className="pure-color-options">
                   {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`pure-color-option ${selectedColor === color ? "selected" : ""}`}
+                      className={`pure-color-option ${
+                        selectedColor === color ? "selected" : ""
+                      }`}
                     >
                       {color}
                     </button>
@@ -204,7 +310,9 @@ export function PureProductDetailPage({
                 <input
                   type="number"
                   value={quantity}
-                  onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleQuantityChange(parseInt(e.target.value) || 1)
+                  }
                   className="pure-quantity-input"
                   min="1"
                 />
@@ -229,7 +337,11 @@ export function PureProductDetailPage({
                 <ul className="pure-features-list">
                   {product.features.map((feature, index) => (
                     <li key={index} className="pure-feature-item">
-                      <svg className="pure-feature-icon" fill="currentColor" viewBox="0 0 20 20">
+                      <svg
+                        className="pure-feature-icon"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
                         <path
                           fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -279,8 +391,12 @@ export function PureProductDetailPage({
                     />
                     <div className="pure-feedback-userblock">
                       <div className="pure-feedback-userline">
-                        <p className="pure-feedback-username">{feedback.user}</p>
-                        <span className="pure-feedback-verified">✔ Verified Buyer</span>
+                        <p className="pure-feedback-username">
+                          {feedback.user}
+                        </p>
+                        <span className="pure-feedback-verified">
+                          ✔ Verified Buyer
+                        </span>
                       </div>
                       <div className="pure-feedback-stars">
                         {Array.from({ length: 5 }, (_, i) => (

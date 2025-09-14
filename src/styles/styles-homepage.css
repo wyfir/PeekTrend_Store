@@ -228,11 +228,23 @@
 
 /* Hero Section */
 .homepage-hero {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 260px;
+    margin: 0px auto;
+    max-width: 600px;
+    /* background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); */
+    background-image: url("https://sc04.alicdn.com/kf/H87d0345e1320485089337f391c884525i/267678877/H87d0345e1320485089337f391c884525i.png?w=600&h=600&fit=crop");
+  background-size: cover;      /* fills container, may crop */
+  background-position: center top; /* keeps image centered */
+  background-repeat: no-repeat; /* prevents tiling */
     padding: 4rem 1rem;
     text-align: center;
 }
-
+/* .homepage-hero::before {
+content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+} */
 .homepage-hero-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -242,7 +254,7 @@
     font-size: 2.5rem;
     font-weight: 700;
     color: #030213;
-    margin-bottom: 1rem;
+    margin-bottom: 3rem;
     line-height: 1.2;
 }
 

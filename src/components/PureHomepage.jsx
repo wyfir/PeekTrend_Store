@@ -36,11 +36,11 @@ export default function PureHomepage({
             <br />
             Stay in the Game.
           </h1>
-          <p className="homepage-hero-subtitle">
+          {/* <p className="homepage-hero-subtitle">
             Discover premium phone cooling solutions that eliminate overheating
             and unlock your device's full potential during gaming, streaming,
             and intensive use.
-          </p>
+          </p> */}
           <button
             className="homepage-hero-cta"
             onClick={() => (window.location.href = "/products")}

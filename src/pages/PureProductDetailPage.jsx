@@ -146,7 +146,14 @@ export function PureProductDetailPage({
             {/* Main image with swipe/drag */}
             <div
               className="pure-main-image-wrapper"
-              style={{ overflow: "hidden", width: "100%" }}
+              style={{
+    overflow: "hidden",
+    width: "100%",
+    maxHeight: "400px",  // <-- fixed maximum height
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
             >
               <div
                 style={{
@@ -162,7 +169,9 @@ export function PureProductDetailPage({
                   src={productImages[selectedImageIndex]}
                   alt={product.name}
                   className="pure-main-image"
-                  style={{ flex: "0 0 100%" }}
+                  style={{ flex: "0 0 100%" ,
+                    maxHeight: "100%",
+                  }}
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}

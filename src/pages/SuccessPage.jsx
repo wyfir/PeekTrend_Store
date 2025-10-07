@@ -173,7 +173,7 @@ export function SuccessPage() {
         <div className="sp-header">
           <div className="sp-icon" aria-hidden>
             {paid ? (
-              <img className="sp-icon-success" src="https://fondy.io/guids/CABINET_246e57916cbb4875b5d613f67af74803d0c224c640569adaffd803f9155fcab5/images/success.gif" alt="Payment successful" />
+              <img className="sp-icon-success" src="https://i.pinimg.com/originals/4a/10/e3/4a10e39ee8325a06daf00881ac321b2f.gif" alt="Payment successful" />
             ) : failed ? (
               <div className="sp-icon-error">!</div>
             ) : (

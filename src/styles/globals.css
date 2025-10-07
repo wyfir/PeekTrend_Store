@@ -483,3 +483,61 @@ height: 80px;
 .sp-eta-title { color:#6b7280; font-size:13px; }
 .sp-eta-date { color:#111827; font-weight:700; font-size:14px; margin-top:2px; }
 .sp-eta-sub { color:#6b7280; font-size:12px; margin-top:2px; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.drop-banner {
+  background: linear-gradient(90deg, #ff5a5f, #ff9500);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem 0;
+  animation: pulse 2s infinite;
+}
+
+.drop-banner h2 {
+  font-size: 1.8rem;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.drop-subtext {
+  font-size: 1rem;
+  margin-top: 0.3rem;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.pure-add-to-cart.disabled {
+  background: #444 !important;
+  border: none;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}

@@ -10,6 +10,7 @@ import {
   useUser,
 } from "@clerk/clerk-react";
 import "../styles/styles-pure-components.css";
+import SocialButtons from "./Socials_btn";
 
 export function PureHeader({ cartItemCount, onCartClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -49,7 +50,10 @@ export function PureHeader({ cartItemCount, onCartClick }) {
       <div className="homepage-topbar">
         <div className="homepage-topbar-content">
           ✉ Support:{" "}
-          <a style={{ textDecoration: "none" }} href="mailto:support@peektrend.com">
+          <a
+            style={{ textDecoration: "none" }}
+            href="mailto:support@peektrend.com"
+          >
             support@peektrend.com
           </a>
           <span className="separator">|</span>✅ 30-Day Return Guarantee
@@ -59,7 +63,11 @@ export function PureHeader({ cartItemCount, onCartClick }) {
       <header className="homepage-header">
         <div className="homepage-header-container">
           <div onClick={() => navigate("/")} className="homepage-logo">
-            <img src="/peektrend_logo.svg" alt="Logo" style={{ height: "40px" }} />
+            <img
+              src="/peektrend_logo.svg"
+              alt="Logo"
+              style={{ height: "40px" }}
+            />
           </div>
 
           <nav className="homepage-nav">
@@ -67,7 +75,8 @@ export function PureHeader({ cartItemCount, onCartClick }) {
               const names = ["Home", "Products", "Reviews"];
               const active =
                 location.pathname === path ||
-                (path === "/products" && location.pathname.startsWith("/products"));
+                (path === "/products" &&
+                  location.pathname.startsWith("/products"));
               return (
                 <button
                   key={path}
@@ -140,11 +149,20 @@ export function PureHeader({ cartItemCount, onCartClick }) {
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+              {/* ✅ Real Close Button */}
+              <button
+                className="mobile-menu-close"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                ✕
+              </button>
+
               {["/", "/products", "/reviews"].map((path, i) => {
                 const names = ["Home", "Products", "Reviews"];
                 const active =
                   location.pathname === path ||
-                  (path === "/products" && location.pathname.startsWith("/products"));
+                  (path === "/products" &&
+                    location.pathname.startsWith("/products"));
                 return (
                   <button
                     key={path}
@@ -158,6 +176,7 @@ export function PureHeader({ cartItemCount, onCartClick }) {
                   </button>
                 );
               })}
+              <SocialButtons />
             </div>
           </div>
         )}

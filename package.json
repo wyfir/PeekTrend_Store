@@ -12,13 +12,15 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.36.0",
     "@clerk/nextjs": "^6.25.5",
+    "@supabase/supabase-js": "^2.74.0",
     "country-flag-icons": "^1.5.19",
     "flag-icons": "^7.5.0",
     "ipsp-js-sdk": "^2.0.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.0",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

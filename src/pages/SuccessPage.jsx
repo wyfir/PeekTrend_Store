@@ -173,7 +173,7 @@ export function SuccessPage() {
         <div className="sp-header">
           <div className="sp-icon" aria-hidden>
             {paid ? (
-              <img className="sp-icon-success" src="https://i.pinimg.com/originals/4a/10/e3/4a10e39ee8325a06daf00881ac321b2f.gif" alt="Payment successful" />
+              <img style={{width: "200px"}} className="sp-icon-success" src="https://recruitment.hpushimla.in/Images/tick-gif-6.gif" alt="Payment successful" />
             ) : failed ? (
               <div className="sp-icon-error">!</div>
             ) : (

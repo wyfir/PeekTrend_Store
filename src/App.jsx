@@ -34,7 +34,7 @@ import {
 import FondyModal from "./components/FondyModal";
 import { useFondyCheckout } from "./hooks/useFondyCheckout";
 import { useNavigate } from "react-router-dom";
-
+import Button from "./components/DM_Support_btn.jsx";
 export default function App() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailProduct, setDetailProduct] = useState(null);
@@ -252,6 +252,7 @@ export default function App() {
         onRemoveItem={removeFromCart}
         onCheckout={() => navigate("/checkout")} // 👈 navigate AFTER close animation
       />
+      <Button />
     </div>
   );
 }

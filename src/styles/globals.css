@@ -541,3 +541,27 @@ height: 80px;
   cursor: not-allowed !important;
   opacity: 0.6;
 }
+
+
+
+
+.drop-email-input {
+  width: 100%;
+  padding: 0.6rem;
+  margin: 1rem 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.drop-error {
+  color: #ff4d4f;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+/* Add this to styles-pure-components.css for debugging */
+#drop-email-input {
+  position: relative;
+  z-index: 10000000000000000000000000000000;
+  pointer-events: auto;
+  opacity: 1;
+}

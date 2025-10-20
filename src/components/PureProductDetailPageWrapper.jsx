@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-// import { PureProductDetailPage } from "../pages/PureProductDetailPage.jsx";
-import { DropProductDetailPage } from "../pages/DropProductDetailPage.jsx";
+import { PureProductDetailPage } from "../pages/PureProductDetailPage.jsx";
+// import { DropProductDetailPage } from "../pages/DropProductDetailPage.jsx";
 import { useState, useEffect } from "react";
 import { API_BASE_URL } from "../config";
 
@@ -20,15 +20,7 @@ export function PureProductDetailPageWrapper({ onAddToCart, setIsCartOpen }) {
   if (!product) return <div>Product not found</div>;
 
   return (
-    <DropProductDetailPage
-      product={product}
-      onBack={() => window.history.back()}
-      onAddToCart={(quantity, selectedColor) =>
-        onAddToCart(product, quantity, selectedColor)
-      }
-      setIsCartOpen={setIsCartOpen} // ✅ now properly passed
-    />
-    //     <PureProductDetailPage
+    // <DropProductDetailPage
     //   product={product}
     //   onBack={() => window.history.back()}
     //   onAddToCart={(quantity, selectedColor) =>
@@ -36,5 +28,13 @@ export function PureProductDetailPageWrapper({ onAddToCart, setIsCartOpen }) {
     //   }
     //   setIsCartOpen={setIsCartOpen} // ✅ now properly passed
     // />
+        <PureProductDetailPage
+      product={product}
+      onBack={() => window.history.back()}
+      onAddToCart={(quantity, selectedColor) =>
+        onAddToCart(product, quantity, selectedColor)
+      }
+      setIsCartOpen={setIsCartOpen} // ✅ now properly passed
+    />
   );
 }

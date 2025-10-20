@@ -565,3 +565,34 @@ height: 80px;
   pointer-events: auto;
   opacity: 1;
 }
+
+
+
+.tg_succ {
+  max-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.iconWwrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+
+
+.img-wrapper-SUCA {
+height: 40px;
+}
+
+.togg {
+display: flex;
+flex-direction: column;
+align-items: start;
+margin-left: 20px;
+}
